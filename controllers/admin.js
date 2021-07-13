@@ -21,7 +21,7 @@ exports.postAddProduct=(req,res,next)=>{
     const imageUrl=req.body.imageUrl;
     const price=req.body.price;
     const desc=req.body.desc;
-    const product=new Product(null,title,imageUrl,price,desc);
+    const product=new Product(null,title,imageUrl,price,desc,req.user._id);
     product.save();
     res.redirect('/products');
 }
@@ -34,14 +34,18 @@ exports.getEditProduct=(req,res,next)=>{
     if(!editMode){
         return res.redirect('/')
     }
-    Product.finById(prodId,(data)=>{
+    Product.finById(prodId)
+    .then(data=>{
        res.render('admin/edit-product',
         {path:"admin/edit-product",
         pageTitle:"Edit Product",
         editMode:editMode,
         product:data
         });
-    });
+    })
+    .catch(err=>{
+        console.log(err);
+    })
     
 }
 
@@ -51,21 +55,36 @@ exports.postEditProduct=(req,res,next)=>{
     const imageUrl=req.body.imageUrl;
     const price=req.body.price;
     const desc=req.body.desc;
-    const product=new Product(prodId,title,imageUrl,price,desc);
-    product.save();
-    res.redirect('/admin/products');
+    const product=new Product(prodId,title,imageUrl,price,desc,req.user._id);
+    product.update()
+    .then(()=>{
+        res.redirect('/admin/products');
+    })
+    .catch(err=>{
+        console.log(err);
+    })
 }
 
 exports.postDeleteProduct=(req,res,next)=>{
     const prodId=req.body.prodId;
-    Product.deleteById(prodId);
-    res.redirect('/admin/products');
+    Product.deleteById(prodId)
+    .then(data=>{
+        //console.log(data);
+      res.redirect('/admin/products');
   
+    })
+    .catch(err=>{
+        console.log(err);
+    })
 
 }
 
 exports.getProducts=(req,res,next)=>{
-    Product.fetchAll((data)=>{
+    Product.fetchAll()
+    .then(data=>{
         res.render("admin/products",{prods:data,path:"admin/products",pageTitle:"Admin Product"});
+    })
+    .catch(err=>{
+        console.log(err);
     })
 }
