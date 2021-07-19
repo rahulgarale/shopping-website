@@ -2,6 +2,11 @@ const Product=require('../models/product');
 
 const Cart=require('../models/cart');
 const User = require('../models/user');
+const db=require('../utils/db_mongoose');
+const { ObjectID } = require('mongodb');
+const { Orders } = require('../utils/db_mongoose');
+const Products=db.Product;
+const Order=db.Orders;
 
 exports.getProduct=(req,res,next)=>{
     //res.send({"Message":"Hello"});
@@ -16,18 +21,28 @@ exports.getProduct=(req,res,next)=>{
   //res.render("shop",{prods:productData,path:"/shop",pageTitle:"MyShop"});
 
   //using DB
-  Product.fetchAll()
+  // Product.fetchAll()
+  // .then(data=>{
+  //   res.render("shop/product-list",{prods:data,path:"/products",pageTitle:"MyShop"});
+  // })
+  // .catch(err=>{
+  //   console.log(err);
+  // })
+
+  //using mongoose
+  Products.find()
   .then(data=>{
     res.render("shop/product-list",{prods:data,path:"/products",pageTitle:"MyShop"});
   })
   .catch(err=>{
-    console.log(err);
-  })
+      console.log(err);
+    })
 }
 
 exports.getSingleProduct= (req,res,next)=>{
-  const productId= req.params.productId
-  Product.finById(productId)
+  const prodID= req.params.productId;
+  console.log("productID",prodID);
+  Products.findById({_id: new ObjectID(prodID)})
   .then((data)=>{
     res.render("shop/product-detail",{product:data,path:"/products",pageTitle:"MyShop"});
   })
@@ -43,13 +58,22 @@ exports.getIndex=(req,res,next)=>{
 // })
 
   //using DB
-  Product.fetchAll()
+  // Product.fetchAll()
+  // .then(data=>{
+  //   res.render("shop/index",{prods:data,path:"/shop",pageTitle:"MyShop"});
+  // })
+  // .catch(err=>{
+  //   console.log(err);
+  // })
+
+  //using mongoose
+  Products.find()
   .then(data=>{
     res.render("shop/index",{prods:data,path:"/shop",pageTitle:"MyShop"});
   })
   .catch(err=>{
-    console.log(err);
-  })
+      console.log(err);
+    })
 }
 
 exports.getCart=(req,res,next)=>{
@@ -67,8 +91,8 @@ exports.getCart=(req,res,next)=>{
 // })
 
   req.user.getCart()
-  .then(products=>{
-    res.render('shop/cart',{path:'/cart',pageTitle:'Your Cart',products:products})
+  .then(data=>{
+    res.render('shop/cart',{path:'/cart',pageTitle:'Your Cart',products:data.cart.items})
   })
 }
 
@@ -77,7 +101,7 @@ exports.postCart=(req,res,next)=>{
   // Product.finById(prodId,(prodData)=>{
   //   Cart.addProduct(prodId,prodData.price)
   // })
-  Product.finById(prodId)
+  Products.findById(prodId)
   .then(prodData=>{
     return req.user.addToCart(prodData)
   })
@@ -115,17 +139,44 @@ exports.getOrders=(req,res,next)=>{
 //   Product.fetchAll((data)=>{
 //     res.render("shop/orders",{prods:data,path:"/orders",pageTitle:"Your orders"});
 // })
-  req.user.getOrders()
+  // req.user.getOrders()
+  // .then(data=>{
+  //   console.log(data);
+  //   res.render("shop/orders",{orders:data,path:"/orders",pageTitle:"Your orders"});
+  // })
+
+  //by mongoose
+  Orders.find({"user.userId":req.user._id})
   .then(data=>{
-    console.log(data);
     res.render("shop/orders",{orders:data,path:"/orders",pageTitle:"Your orders"});
+  })
+  .catch(err=>{
+    console.log(err);
   })
 }
 
 exports.postOrders=(req,res,next)=>{
-  req.user.addOrder()
+  req.user.getCart()
   .then(result=>{
-    res.redirect('shop/orders');
+    const products=result.cart.items.map(p=>{
+      return {quantity:p.quantity,product:{...p.productId._doc}} ///._doc to get data and not meta data here we need all produ data like title,des,price so that we can create obj using spred and only get _doc obj which has only data and not metadaa to be store
+    });
+    const order= new Order(
+      {
+        user:{
+          userId:req.user
+        },
+        products:products
+      }
+    )
+    return order.save();
+  })
+  .then(result=>{
+    return req.user.clearCart();
+    
+  })
+  .then(()=>{
+    res.redirect('/orders');
   })
   .catch(err=>{
     console.log(err);
