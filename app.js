@@ -46,17 +46,18 @@ app.use(session({secret:"this is just long sting",resave:false,saveUninitialized
 
 //check user auth
 app.use((req,res,next)=>{
-    User.findById("60eedbe4cfc52112f42499b8")
+    if(!req.session.user){
+       return next();
+    }
+    User.findById(req.session.user._id)
     .then((user)=>{
      //  console.log(data)
-       req.user=user;
+        req.user=user;
         next();
-        
     })
     .catch(err=>{
         console.log(err);
     })
-
 })
 
 //handling admin routes
@@ -82,6 +83,9 @@ User.findOne()
     app.listen(port,()=>{
         console.log("server listining at",port);
     });
+})
+.catch((err)=>{
+    console.log(err)
 })
 
 //by mongodb mongoClient

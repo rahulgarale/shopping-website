@@ -16,7 +16,11 @@ exports.getAddProduct=(req,res,next)=>{
     //res.sendFile(path.join( rootDir,'views','add-product.html'));
 
     //render ejs file
+<<<<<<< HEAD
     res.render('admin/edit-product',{path:"admin/add-product",pageTitle:"Add Product ",editMode:false,isAuthenticated:req.isLoggedin});
+=======
+    res.render('admin/edit-product',{path:"admin/add-product",pageTitle:"Add Product ",editMode:false,isAuthenticated:req.session.isloggedin});
+>>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
 }
 
 exports.postAddProduct=(req,res,next)=>{
@@ -53,7 +57,11 @@ exports.getEditProduct=(req,res,next)=>{
         pageTitle:"Edit Product",
         editMode:editMode,
         product:data,
+<<<<<<< HEAD
         isAuthenticated:req.isLoggedin
+=======
+        isAuthenticated:req.session.isloggedin
+>>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
         });
     })
     .catch(err=>{
@@ -136,7 +144,11 @@ exports.getProducts=(req,res,next)=>{
 //    .populate('userId') //to populate related tables/schema data
    .then(data=>{
        console.log(data);
+<<<<<<< HEAD
        res.render("admin/products",{prods:data,path:"admin/products",pageTitle:"Admin Product",isAuthenticated:req.isLoggedin})
+=======
+       res.render("admin/products",{prods:data,path:"admin/products",pageTitle:"Admin Product",isAuthenticated:req.session.isloggedin})
+>>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
    })
    .catch(err=>{
        console.log(err);
