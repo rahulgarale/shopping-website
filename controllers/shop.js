@@ -32,11 +32,7 @@ exports.getProduct=(req,res,next)=>{
   //using mongoose
   Products.find()
   .then(data=>{
-<<<<<<< HEAD
-    res.render("shop/product-list",{prods:data,path:"/products",pageTitle:"MyShop",isAuthenticated:req.isLoggedin});
-=======
     res.render("shop/product-list",{prods:data,path:"/products",pageTitle:"MyShop",isAuthenticated:req.session.isloggedin});
->>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
   })
   .catch(err=>{
       console.log(err);
@@ -48,11 +44,7 @@ exports.getSingleProduct= (req,res,next)=>{
   console.log("productID",prodID);
   Products.findById({_id: new ObjectID(prodID)})
   .then((data)=>{
-<<<<<<< HEAD
-    res.render("shop/product-detail",{product:data,path:"/products",pageTitle:"MyShop",isAuthenticated:req.isLoggedin});
-=======
     res.render("shop/product-detail",{product:data,path:"/products",pageTitle:"MyShop",isAuthenticated:req.session.isloggedin});
->>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
   })
   .catch(err=>{
     console.log(err);
@@ -77,11 +69,7 @@ exports.getIndex=(req,res,next)=>{
   //using mongoose
   Products.find()
   .then(data=>{
-<<<<<<< HEAD
-    res.render("shop/index",{prods:data,path:"/shop",pageTitle:"MyShop",isAuthenticated:req.isLoggedin});
-=======
     res.render("shop/index",{prods:data,path:"/shop",pageTitle:"MyShop",isAuthenticated:req.session.isloggedin});
->>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
   })
   .catch(err=>{
       console.log(err);
@@ -104,11 +92,7 @@ exports.getCart=(req,res,next)=>{
 
   req.user.getCart()
   .then(data=>{
-<<<<<<< HEAD
-    res.render('shop/cart',{path:'/cart',pageTitle:'Your Cart',products:data.cart.items,isAuthenticated:req.isLoggedin})
-=======
     res.render('shop/cart',{path:'/cart',pageTitle:'Your Cart',products:data.cart.items,isAuthenticated:req.session.isloggedin})
->>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
   })
 }
 
@@ -164,11 +148,7 @@ exports.getOrders=(req,res,next)=>{
   //by mongoose
   Orders.find({"user.userId":req.user._id})
   .then(data=>{
-<<<<<<< HEAD
-    res.render("shop/orders",{orders:data,path:"/orders",pageTitle:"Your orders",isAuthenticated:req.isLoggedin});
-=======
     res.render("shop/orders",{orders:data,path:"/orders",pageTitle:"Your orders",isAuthenticated:req.session.isloggedin});
->>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
   })
   .catch(err=>{
     console.log(err);
@@ -205,11 +185,7 @@ exports.postOrders=(req,res,next)=>{
 
 exports.getCheckout=(req,res,next)=>{
   Product.fetchAll((data)=>{
-<<<<<<< HEAD
-    res.render("shop/checkout",{prods:data,path:"/checkout",pageTitle:"Checkout",isAuthenticated:req.isLoggedin});
-=======
     res.render("shop/checkout",{prods:data,path:"/checkout",pageTitle:"Checkout",isAuthenticated:req.session.isloggedin});
->>>>>>> 4d53e224cb9524730b012e7c83ba0ed4f351fb31
 })
 
 }
