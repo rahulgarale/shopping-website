@@ -16,7 +16,7 @@ exports.getAddProduct=(req,res,next)=>{
     //res.sendFile(path.join( rootDir,'views','add-product.html'));
 
     //render ejs file
-    res.render('admin/edit-product',{path:"admin/add-product",pageTitle:"Add Product ",editMode:false});
+    res.render('admin/edit-product',{path:"admin/add-product",pageTitle:"Add Product ",editMode:false,isAuthenticated:req.isLoggedin});
 }
 
 exports.postAddProduct=(req,res,next)=>{
@@ -52,7 +52,8 @@ exports.getEditProduct=(req,res,next)=>{
         {path:"admin/edit-product",
         pageTitle:"Edit Product",
         editMode:editMode,
-        product:data
+        product:data,
+        isAuthenticated:req.isLoggedin
         });
     })
     .catch(err=>{
@@ -135,7 +136,7 @@ exports.getProducts=(req,res,next)=>{
 //    .populate('userId') //to populate related tables/schema data
    .then(data=>{
        console.log(data);
-       res.render("admin/products",{prods:data,path:"admin/products",pageTitle:"Admin Product"})
+       res.render("admin/products",{prods:data,path:"admin/products",pageTitle:"Admin Product",isAuthenticated:req.isLoggedin})
    })
    .catch(err=>{
        console.log(err);

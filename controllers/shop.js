@@ -32,7 +32,7 @@ exports.getProduct=(req,res,next)=>{
   //using mongoose
   Products.find()
   .then(data=>{
-    res.render("shop/product-list",{prods:data,path:"/products",pageTitle:"MyShop"});
+    res.render("shop/product-list",{prods:data,path:"/products",pageTitle:"MyShop",isAuthenticated:req.isLoggedin});
   })
   .catch(err=>{
       console.log(err);
@@ -44,7 +44,7 @@ exports.getSingleProduct= (req,res,next)=>{
   console.log("productID",prodID);
   Products.findById({_id: new ObjectID(prodID)})
   .then((data)=>{
-    res.render("shop/product-detail",{product:data,path:"/products",pageTitle:"MyShop"});
+    res.render("shop/product-detail",{product:data,path:"/products",pageTitle:"MyShop",isAuthenticated:req.isLoggedin});
   })
   .catch(err=>{
     console.log(err);
@@ -69,7 +69,7 @@ exports.getIndex=(req,res,next)=>{
   //using mongoose
   Products.find()
   .then(data=>{
-    res.render("shop/index",{prods:data,path:"/shop",pageTitle:"MyShop"});
+    res.render("shop/index",{prods:data,path:"/shop",pageTitle:"MyShop",isAuthenticated:req.isLoggedin});
   })
   .catch(err=>{
       console.log(err);
@@ -92,7 +92,7 @@ exports.getCart=(req,res,next)=>{
 
   req.user.getCart()
   .then(data=>{
-    res.render('shop/cart',{path:'/cart',pageTitle:'Your Cart',products:data.cart.items})
+    res.render('shop/cart',{path:'/cart',pageTitle:'Your Cart',products:data.cart.items,isAuthenticated:req.isLoggedin})
   })
 }
 
@@ -148,7 +148,7 @@ exports.getOrders=(req,res,next)=>{
   //by mongoose
   Orders.find({"user.userId":req.user._id})
   .then(data=>{
-    res.render("shop/orders",{orders:data,path:"/orders",pageTitle:"Your orders"});
+    res.render("shop/orders",{orders:data,path:"/orders",pageTitle:"Your orders",isAuthenticated:req.isLoggedin});
   })
   .catch(err=>{
     console.log(err);
@@ -185,7 +185,7 @@ exports.postOrders=(req,res,next)=>{
 
 exports.getCheckout=(req,res,next)=>{
   Product.fetchAll((data)=>{
-    res.render("shop/checkout",{prods:data,path:"/checkout",pageTitle:"Checkout"});
+    res.render("shop/checkout",{prods:data,path:"/checkout",pageTitle:"Checkout",isAuthenticated:req.isLoggedin});
 })
 
 }
