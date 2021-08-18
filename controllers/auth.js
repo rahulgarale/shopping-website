@@ -1,4 +1,5 @@
 const User=require('../utils/db_mongoose').Users;
+const bcrypt=require('bcryptjs');
 exports.getAuth=(req,res,next)=>{
     // const isloggedin=req.get('Cookie').split(';')[0].split('=')[1];
     // console.log(isloggedin);
@@ -8,16 +9,30 @@ exports.postLogin=(req,res,next)=>{
     //coookie setup
     // res.setHeader('Set-Cookie','loggedIn=true') //set cookie name loggedIn
     // req.isLoggedin=true;
-    
-    User.findById("60eedbe4cfc52112f42499b8")
+    const email=req.body.email;
+    const password=req.body.password;
+    User.findOne({email:email})
     .then((user)=>{
-       // console.log(data)
-        req.session.isloggedin=true;
-        req.session.user=user;
-        req.session.save((err)=>{
-            console.log(err);
-            res.redirect('/');
-        });
+       if(!user){
+        return res.redirect('/login');
+       }
+       bcrypt.compare(password,user.password)
+       .then((doMatch)=>{
+           if(doMatch){
+            req.session.isloggedin=true;
+            req.session.user=user;
+           return req.session.save((err)=>{
+                console.log(err);
+                res.redirect('/');
+            });
+
+           }
+           return res.redirect('/login');
+       })
+       .catch(err=>{
+           console.log(err);
+       })
+       
     })
     .catch(err=>{
         console.log(err);

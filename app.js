@@ -1,6 +1,7 @@
 const express= require('express');
 const path=require('path');
 const session=require('express-session'); //use for set session obejct
+const csrf=require('csurf'); //csrf token
 const MongoDbStore=require('connect-mongodb-session')(session)  //used to store session in mongodb
 
 const adminRoutes=require('./routes/admin');
@@ -22,6 +23,9 @@ const store=new MongoDbStore({
     collection:'sessions'
 })
 
+
+//csrf intialize
+const csrfProtection=csrf();
 //app.set use to set anything globally like we are setting view engine here
 
 
@@ -60,6 +64,16 @@ app.use((req,res,next)=>{
     })
 })
 
+app.use(csrfProtection)
+
+
+//set local varible that need to pass in all view
+app.use((req,res,next)=>{
+    res.locals.isAuthenticated=req.session.isloggedin;
+    res.locals.csrfToken=req.csrfToken();
+    next();
+})
+
 //handling admin routes
 app.use('/admin',adminRoutes);
 
@@ -87,6 +101,8 @@ User.findOne()
 .catch((err)=>{
     console.log(err)
 })
+
+
 
 //by mongodb mongoClient
 // db.mongoConnect(()=>{
