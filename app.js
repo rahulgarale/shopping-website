@@ -3,7 +3,7 @@ const path=require('path');
 const session=require('express-session'); //use for set session obejct
 const csrf=require('csurf'); //csrf token
 const MongoDbStore=require('connect-mongodb-session')(session)  //used to store session in mongodb
-
+const flash= require('connect-flash') //this pacakge is used to display message through session that will be cleared once display to user
 const adminRoutes=require('./routes/admin');
 const shop=require('./routes/shop');
 const authRoutes=require('./routes/auth');
@@ -46,7 +46,19 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.static(path.join(__dirname,'public')));
 
 //setting up session middelware
-app.use(session({secret:"this is just long sting",resave:false,saveUninitialized:false,store:store }));
+app.use(session(
+    {
+        secret:"this is just long sting",
+        resave:false,
+        saveUninitialized:false,
+        store:store 
+    }
+));
+
+
+//flash initalize it should be after session
+app.use(flash());
+
 
 //check user auth
 app.use((req,res,next)=>{
@@ -88,19 +100,23 @@ app.use(pageNotFoundController.get404)
 
 
 //by mongoose
-User.findOne()
-.then(user=>{
-    if(!user){
-        const user =new User({name:"Rahul",email:"abc@test.com",cart:{items:[]}})
-        user.save();
-    }
-    app.listen(port,()=>{
-        console.log("server listining at",port);
-    });
-})
-.catch((err)=>{
-    console.log(err)
-})
+// User.findOne()
+// .then(user=>{
+//     if(!user){
+//         const user =new User({name:"Rahul",email:"abc@test.com",cart:{items:[]}})
+//         user.save();
+//     }
+//     app.listen(port,()=>{
+//         console.log("server listining at",port);
+//     });
+// })
+// .catch((err)=>{
+//     console.log(err)
+// })
+
+app.listen(port,()=>{
+    console.log("server listining at",port);
+});
 
 
 
