@@ -93,14 +93,16 @@ exports.postEditProduct=(req,res,next)=>{
     //by mongoose
     Products.findById(prodId)
     .then(product=>{
+        if(product.userId.toString() !== req.user._id.toString()){
+            return res.redirect('/');
+        }
         product.title=title;
         product.imageUrl=imageUrl;
         product.price=price;
         product.desc=desc;
-        return product.save();
-    })
-    .then(()=>{
-        res.redirect('/admin/products');
+        return product.save().then(()=>{
+            res.redirect('/admin/products');
+        });
     })
     .catch(err=>{
         console.log(err);
@@ -120,7 +122,7 @@ exports.postDeleteProduct=(req,res,next)=>{
     // })
 
     //by mongoose
-    Products.findByIdAndRemove(prodId)
+    Products.deleteOne({_id:prodId,userId:req.user._id})
     .then(()=>{
         res.redirect('/admin/products');
     })
@@ -131,11 +133,11 @@ exports.postDeleteProduct=(req,res,next)=>{
 }
 
 exports.getProducts=(req,res,next)=>{
-   Products.find({})
+   Products.find({userId:req.user._id})
 //    .select('title price -_id')  //to select particular fields
 //    .populate('userId') //to populate related tables/schema data
    .then(data=>{
-       console.log(data);
+      // console.log(data);
        res.render("admin/products",{prods:data,path:"admin/products",pageTitle:"Admin Product",isAuthenticated:req.session.isloggedin})
    })
    .catch(err=>{
